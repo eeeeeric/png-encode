@@ -1,5 +1,6 @@
 import io
 import struct
+import sys
 import zlib
 
 PNG_HEADER = b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'
@@ -89,3 +90,22 @@ def PNGDecode(png):
         return data
     else:
         return None
+
+def _cli_error():
+    print('usage: {0} --decode|--encode INFILE OUTFILE'.format(sys.argv[0]))
+    sys.exit(1)
+
+if __name__ == '__main__':
+    if len(sys.argv) != 4:
+        _cli_error()
+
+    if sys.argv[1] == '--encode':
+        with open(sys.argv[3], 'wb') as output:
+            with open(sys.argv[2], 'rb') as input:
+                output.write(PNGEncode(input.read()))
+    elif sys.argv[1] == '--decode':
+        with open(sys.argv[3], 'wb') as output:
+            with open(sys.argv[2], 'rb') as input:
+                output.write(PNGDecode(input.read()))
+    else:
+        _cli_error()
